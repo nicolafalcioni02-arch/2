@@ -75,7 +75,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            transition: top 0.4s ease, left 0.4s ease;
+            /* Velocizzata l'animazione per rendere più difficile il tap */
+            transition: top 0.2s ease, left 0.2s ease;
             cursor: pointer;
         }
 
@@ -134,7 +135,8 @@
         }
         .moving-btn {
             position: absolute;
-            transition: top 0.7s ease-in-out, left 0.7s ease-in-out;
+            /* Transizione molto più veloce */
+            transition: top 0.25s ease-in-out, left 0.25s ease-in-out;
             width: 70px;
             padding: 10px 0;
             margin: 0;
@@ -153,14 +155,15 @@
     <!-- Gioco 1: Contaminante -->
     <div id="step2" class="container hidden">
         <h3>Test 1: Uccidi Pseudomonas</h3>
-        <p>Devi colpirlo 3 volte...pensa che sia GM</p>
+        <!-- Reso più difficile: 5 colpi invece di 3 -->
+        <p>Devi colpirlo 5 volte...pensa che sia GM</p>
         <div id="petri-dish">
             <div id="microbe" ontouchstart="hitMicrobe()" onmousedown="hitMicrobe()">🦠</div>
         </div>
-        <p id="microbe-count" style="margin:0;">Eliminazione: 0/3</p>
+        <p id="microbe-count" style="margin:0;">Eliminazione: 0/5</p>
     </div>
 
-    <!-- Gioco 2: Pozzetti -->
+    <!-- Gioco 2: Pozzetti (Invariato) -->
     <div id="step3" class="container hidden">
         <h3>Test 2: Colora il Biofilm</h3>
         <p>Riempi i pozzetti tappandoli. Sbrigati, che muoiono i pesci</p>
@@ -180,7 +183,7 @@
     <!-- Gioco 3: Centrifuga -->
     <div id="step4" class="container hidden">
         <h3>Test 3: Centrifuga</h3>
-        <p>Tappa ripetutamente il pulsante per far salire i giri fino a 14.000 RPM per pellettare (non sbiellare la centrifuga)</p>
+        <p>Tappa velocissimamente il pulsante per far salire i giri fino a 14.000 RPM (non sbiellare la centrifuga)</p>
         <div id="rpm-bar-container">
             <div id="rpm-bar-fill"></div>
         </div>
@@ -190,8 +193,8 @@
 
     <!-- Gioco 4: Slider -->
     <div id="step5" class="container hidden">
-        <h3>Test 4: Dai questo è semplice (ho finito la fantasia mi dispiace)</h3>
-        <p>Trascina fino in fondo in un colpo solo. Se la molli prima, scivola via.</p>
+        <h3>Test 4: Dai questo è semplice... forse.</h3>
+        <p>Trascina fino in fondo. Fai in fretta, scivola indietro da solo!</p>
         <input type="range" id="dna-slider" min="0" max="100" value="0" oninput="checkSlider()" ontouchend="resetSlider()" onmouseup="resetSlider()">
     </div>
 
@@ -211,7 +214,7 @@
     </div>
 
     <script>
-        let microbeMoveInterval, decayInterval, centrifugeInterval, buttonsInterval;
+        let microbeMoveInterval, decayInterval, centrifugeInterval, buttonsInterval, sliderInterval;
 
         function gotoStep(step) {
             document.querySelectorAll('.container').forEach(el => el.classList.add('hidden'));
@@ -220,6 +223,7 @@
             if(step === 2) startMicrobe();
             if(step === 3) startDecay();
             if(step === 4) startCentrifuge();
+            if(step === 5) startSliderDecay();
             if(step === 6) startMovingButtons();
         }
 
@@ -228,25 +232,27 @@
         function startMicrobe() {
             const microbe = document.getElementById('microbe');
             const dish = document.getElementById('petri-dish');
+            // Velocità di movimento portata da 600ms a 300ms
             microbeMoveInterval = setInterval(() => {
                 const maxX = dish.clientWidth - 50;
                 const maxY = dish.clientHeight - 50;
                 microbe.style.left = Math.floor(Math.random() * maxX) + 'px';
                 microbe.style.top = Math.floor(Math.random() * maxY) + 'px';
-            }, 600); 
+            }, 300); 
         }
 
         function hitMicrobe() {
             microbeHits++;
-            document.getElementById('microbe-count').innerText = `Eliminazione: ${microbeHits}/3`;
-            if (microbeHits >= 3) {
+            document.getElementById('microbe-count').innerText = `Eliminazione: ${microbeHits}/5`;
+            // Reso più difficile: richiede 5 colpi
+            if (microbeHits >= 5) {
                 clearInterval(microbeMoveInterval);
                 document.getElementById('microbe').innerHTML = '💥';
                 setTimeout(() => gotoStep(3), 600);
             }
         }
 
-        // --- G2: Pozzetti ---
+        // --- G2: Pozzetti (Invariato) ---
         let activeWells = 0;
         function colorWell(el) {
             if (!el.classList.contains('active')) {
@@ -274,15 +280,17 @@
         let rpm = 0;
         function startCentrifuge() {
             centrifugeInterval = setInterval(() => {
+                // Decadimento molto più punitivo (600 RPM persi in soli 100ms)
                 if (rpm > 0) rpm -= 400; 
                 if (rpm < 0) rpm = 0;
                 updateCentrifugeUI();
-            }, 200);
+            }, 100);
         }
 
         function spinCentrifuge(e) {
             e.preventDefault();
-            rpm += 1200; 
+            // Ogni click fornisce meno spinta (700 invece di 1200)
+            rpm += 700; 
             if (rpm >= 14000) {
                 rpm = 14000;
                 updateCentrifugeUI();
@@ -300,9 +308,20 @@
         }
 
         // --- G4: Slider ---
+        function startSliderDecay() {
+            // Aggiunto decadimento automatico che costringe a fare in fretta
+            sliderInterval = setInterval(() => {
+                const slider = document.getElementById('dna-slider');
+                if (slider.value > 0) {
+                    slider.value -= 5;
+                }
+            }, 50);
+        }
+
         function checkSlider() {
             const slider = document.getElementById('dna-slider');
             if (slider.value == 100) {
+                clearInterval(sliderInterval);
                 setTimeout(() => gotoStep(6), 300);
             }
         }
@@ -321,7 +340,6 @@
             const container = document.getElementById('moving-btn-container');
 
             function move() {
-                // Calcola lo spazio disponibile sottraendo la larghezza/altezza dei bottoni
                 const maxX = container.clientWidth - 70; 
                 const maxY = container.clientHeight - 45;
 
@@ -332,11 +350,10 @@
                 btnNo.style.top = Math.floor(Math.random() * maxY) + 'px';
             }
 
-            // Muove i bottoni subito all'avvio della fase
             move();
             
-            // Continua a farli muovere ogni 700ms
-            buttonsInterval = setInterval(move, 700);
+            // Si muovono molto più velocemente: ogni 250ms (prima era 700ms)
+            buttonsInterval = setInterval(move, 250);
         }
 
         function clickNo(e) {
@@ -346,8 +363,8 @@
 
         function clickSi(e) {
             e.preventDefault();
-            clearInterval(buttonsInterval); // Ferma il movimento
-            gotoStep(7); // Vai alla fine
+            clearInterval(buttonsInterval);
+            gotoStep(7); 
         }
     </script>
 </body>
