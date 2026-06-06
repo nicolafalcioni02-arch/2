@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Sofia APRILO IMMEDIATAMENTE!!!!</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #2d3748;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            text-align: center;
+            user-select: none;
+        }
+        .container {
+            background: white;
+            padding: 30px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 85%;
+            max-width: 380px;
+            min-height: 260px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .hidden { display: none !important; }
+        
+        h2, h3 { margin-top: 0; color: #1a202c; }
+        p { font-size: 15px; color: #4a5568; margin-bottom: 20px; }
+
+        button {
+            background: #3182ce;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+            transition: background 0.2s;
+            touch-action: manipulation;
+        }
+        button:active { background: #2b6cb0; }
+        
+        .btn-red { background: #e53e3e; }
+        .btn-red:active { background: #c53030; }
+        .btn-green { background: #48bb78; }
+        .btn-green:active { background: #38a169; }
+
+        /* G1: Batterio */
+        #petri-dish {
+            position: relative;
+            width: 100%;
+            height: 160px;
+            background: #fdf6e3;
+            border: 2px solid #cbd5e0;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        #microbe {
+            position: absolute;
+            font-size: 40px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: top 0.4s ease, left 0.4s ease;
+            cursor: pointer;
+        }
+
+        /* G2: Pozzetti */
+        #microplate {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .well {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: 2px solid #a0aec0;
+            background: #edf2f7;
+            transition: background 0.1s;
+        }
+        .well.active {
+            background: #48bb78;
+            border-color: #38a169;
+        }
+
+        /* G3: Centrifuga */
+        #rpm-bar-container {
+            width: 100%;
+            height: 20px;
+            background: #edf2f7;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        #rpm-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: #ed8936;
+            transition: width 0.1s linear;
+        }
+
+        /* G4: Slider */
+        input[type=range] {
+            width: 100%;
+            margin: 25px 0;
+            accent-color: #3182ce;
+        }
+
+        /* G5: Domanda Finale */
+        #moving-btn-container {
+            position: relative;
+            width: 100%;
+            height: 150px;
+            border-radius: 8px;
+            background: #f7fafc;
+            overflow: hidden;
+        }
+        .moving-btn {
+            position: absolute;
+            transition: top 0.7s ease-in-out, left 0.7s ease-in-out;
+            width: 70px;
+            padding: 10px 0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Intro -->
+    <div id="step1" class="container">
+        <h2>Vediamo se sei brava....</h2>
+        <p>Oh...non provare a barare</p>
+        <button onclick="gotoStep(2)">Inizia Test</button>
+    </div>
+
+    <!-- Gioco 1: Contaminante -->
+    <div id="step2" class="container hidden">
+        <h3>Test 1: Uccidi Pseudomonas</h3>
+        <p>Devi colpirlo 3 volte...pensa che sia GM</p>
+        <div id="petri-dish">
+            <div id="microbe" ontouchstart="hitMicrobe()" onmousedown="hitMicrobe()">🦠</div>
+        </div>
+        <p id="microbe-count" style="margin:0;">Eliminazione: 0/3</p>
+    </div>
+
+    <!-- Gioco 2: Pozzetti -->
+    <div id="step3" class="container hidden">
+        <h3>Test 2: Colora il Biofilm</h3>
+        <p>Riempi i pozzetti tappandoli. Sbrigati, che muoiono i pesci</p>
+        <div id="microplate">
+            <div class="well" ontouchstart="colorWell(this)" onmousedown="colorWell(this)"></div>
+            <div class="well" ontouchstart="colorWell(this)" onmousedown="colorWell(this)"></div>
+            <div class="well" ontouchstart="colorWell(this)" onmousedown="colorWell(this)"></div>
+            <div class="well" ontouchstart="colorWell(this)" onmousedown="colorWell(this)"></div>
+            <div class="well" ontouchstart="colorWell(this)" onmousedown="colorWell(this)"></div>
+            <div class="well" ontouchstart="colorWell(this)" onmousedown="colorWell(this)"></div>
+            <div class="well" ontouchstart="colorWell(this)" onmousedown="colorWell(this)"></div>
+            <div class="well" ontouchstart="colorWell(this)" onmousedown="colorWell(this)"></div>
+            <div class="well" ontouchstart="colorWell(this)" onmousedown="colorWell(this)"></div>
+        </div>
+    </div>
+
+    <!-- Gioco 3: Centrifuga -->
+    <div id="step4" class="container hidden">
+        <h3>Test 3: Centrifuga</h3>
+        <p>Tappa ripetutamente il pulsante per far salire i giri fino a 14.000 RPM per pellettare (non sbiellare la centrifuga)</p>
+        <div id="rpm-bar-container">
+            <div id="rpm-bar-fill"></div>
+        </div>
+        <p id="rpm-text" style="font-weight:bold;">0 RPM</p>
+        <button ontouchstart="spinCentrifuge(event)" onmousedown="spinCentrifuge(event)">SPIN 🌀</button>
+    </div>
+
+    <!-- Gioco 4: Slider -->
+    <div id="step5" class="container hidden">
+        <h3>Test 4: Dai questo è semplice (ho finito la fantasia mi dispiace)</h3>
+        <p>Trascina fino in fondo in un colpo solo. Se la molli prima, scivola via.</p>
+        <input type="range" id="dna-slider" min="0" max="100" value="0" oninput="checkSlider()" ontouchend="resetSlider()" onmouseup="resetSlider()">
+    </div>
+
+    <!-- Gioco 5: Domanda Finale -->
+    <div id="step6" class="container hidden">
+        <h3>Test 5: Finale</h3>
+        <p><br><br><b>Sofia è intelligente?</b></p>
+        <div id="moving-btn-container">
+            <button id="btn-si" class="moving-btn btn-green" ontouchstart="clickSi(event)" onmousedown="clickSi(event)">Sì</button>
+            <button id="btn-no" class="moving-btn btn-red" ontouchstart="clickNo(event)" onmousedown="clickNo(event)">No</button>
+        </div>
+    </div>
+
+    <!-- Fine -->
+    <div id="step7" class="container hidden">
+        <h2>Brava, test superato.</h2>
+    </div>
+
+    <script>
+        let microbeMoveInterval, decayInterval, centrifugeInterval, buttonsInterval;
+
+        function gotoStep(step) {
+            document.querySelectorAll('.container').forEach(el => el.classList.add('hidden'));
+            document.getElementById('step' + step).classList.remove('hidden');
+
+            if(step === 2) startMicrobe();
+            if(step === 3) startDecay();
+            if(step === 4) startCentrifuge();
+            if(step === 6) startMovingButtons();
+        }
+
+        // --- G1: Batterio ---
+        let microbeHits = 0;
+        function startMicrobe() {
+            const microbe = document.getElementById('microbe');
+            const dish = document.getElementById('petri-dish');
+            microbeMoveInterval = setInterval(() => {
+                const maxX = dish.clientWidth - 50;
+                const maxY = dish.clientHeight - 50;
+                microbe.style.left = Math.floor(Math.random() * maxX) + 'px';
+                microbe.style.top = Math.floor(Math.random() * maxY) + 'px';
+            }, 600); 
+        }
+
+        function hitMicrobe() {
+            microbeHits++;
+            document.getElementById('microbe-count').innerText = `Eliminazione: ${microbeHits}/3`;
+            if (microbeHits >= 3) {
+                clearInterval(microbeMoveInterval);
+                document.getElementById('microbe').innerHTML = '💥';
+                setTimeout(() => gotoStep(3), 600);
+            }
+        }
+
+        // --- G2: Pozzetti ---
+        let activeWells = 0;
+        function colorWell(el) {
+            if (!el.classList.contains('active')) {
+                el.classList.add('active');
+                activeWells++;
+                if (activeWells === 9) {
+                    clearInterval(decayInterval);
+                    setTimeout(() => gotoStep(4), 400);
+                }
+            }
+        }
+
+        function startDecay() {
+            decayInterval = setInterval(() => {
+                let activeEls = document.querySelectorAll('.well.active');
+                if (activeEls.length > 0) {
+                    let random = Math.floor(Math.random() * activeEls.length);
+                    activeEls[random].classList.remove('active');
+                    activeWells--;
+                }
+            }, 800); 
+        }
+
+        // --- G3: Centrifuga ---
+        let rpm = 0;
+        function startCentrifuge() {
+            centrifugeInterval = setInterval(() => {
+                if (rpm > 0) rpm -= 400; 
+                if (rpm < 0) rpm = 0;
+                updateCentrifugeUI();
+            }, 200);
+        }
+
+        function spinCentrifuge(e) {
+            e.preventDefault();
+            rpm += 1200; 
+            if (rpm >= 14000) {
+                rpm = 14000;
+                updateCentrifugeUI();
+                clearInterval(centrifugeInterval);
+                setTimeout(() => gotoStep(5), 500);
+            } else {
+                updateCentrifugeUI();
+            }
+        }
+
+        function updateCentrifugeUI() {
+            document.getElementById('rpm-text').innerText = `${rpm} RPM`;
+            let percent = (rpm / 14000) * 100;
+            document.getElementById('rpm-bar-fill').style.width = percent + '%';
+        }
+
+        // --- G4: Slider ---
+        function checkSlider() {
+            const slider = document.getElementById('dna-slider');
+            if (slider.value == 100) {
+                setTimeout(() => gotoStep(6), 300);
+            }
+        }
+        
+        function resetSlider() {
+            const slider = document.getElementById('dna-slider');
+            if (slider.value < 100) {
+                slider.value = 0; 
+            }
+        }
+
+        // --- G5: Domanda Finale (Bottoni in movimento) ---
+        function startMovingButtons() {
+            const btnSi = document.getElementById('btn-si');
+            const btnNo = document.getElementById('btn-no');
+            const container = document.getElementById('moving-btn-container');
+
+            function move() {
+                // Calcola lo spazio disponibile sottraendo la larghezza/altezza dei bottoni
+                const maxX = container.clientWidth - 70; 
+                const maxY = container.clientHeight - 45;
+
+                btnSi.style.left = Math.floor(Math.random() * maxX) + 'px';
+                btnSi.style.top = Math.floor(Math.random() * maxY) + 'px';
+
+                btnNo.style.left = Math.floor(Math.random() * maxX) + 'px';
+                btnNo.style.top = Math.floor(Math.random() * maxY) + 'px';
+            }
+
+            // Muove i bottoni subito all'avvio della fase
+            move();
+            
+            // Continua a farli muovere ogni 700ms
+            buttonsInterval = setInterval(move, 700);
+        }
+
+        function clickNo(e) {
+            e.preventDefault();
+            alert('Risposta sbagliata');
+        }
+
+        function clickSi(e) {
+            e.preventDefault();
+            clearInterval(buttonsInterval); // Ferma il movimento
+            gotoStep(7); // Vai alla fine
+        }
+    </script>
+</body>
+</html>
